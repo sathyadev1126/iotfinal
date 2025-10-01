@@ -1,0 +1,142 @@
+/* General Styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #e0f7fa, #fce4ec);
+  color: #333;
+}
+
+header {
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+header p {
+  margin-top: 5px;
+  font-size: 1.1rem;
+}
+
+/* Container with Two Sides */
+.container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Course Sections */
+.course {
+  flex: 1;
+  min-width: 300px;
+  background: linear-gradient(135deg, #ffffff, #f3e5f5);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+
+.course:hover {
+  transform: scale(1.02);
+}
+
+.course h2 {
+  text-align: center;
+  color: #4a148c;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  border-bottom: 2px solid #ab47bc;
+  padding-bottom: 10px;
+}
+
+
+/* Weeks Grid */
+.weeks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+}
+
+
+.week-box {
+  background: #f1f8e9;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.week-box:hover {
+  background: #81c784;
+  transform: translateY(-8px) scale(1.05);
+}
+
+
+.week-box h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #080808;
+}
+
+.week-box a {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #6a1b9a;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.week-box a:hover {
+  background: #ff0303;
+  transform: scale(1.05);
+}
+.card {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+}
+
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #4a148c;
+  color: rgb(255, 255, 255);
+  margin-top: 30px;
+}
+.author {
+  font-size: 1.5rem;   /* bigger text */
+  font-weight: bold;   /* bold */
+  color: red;          /* red color */
+  letter-spacing: 2px; /* spacing between letters (optional) */
+}
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+

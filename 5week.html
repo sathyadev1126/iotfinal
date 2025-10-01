@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Quiz</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url("https://cdn.pixabay.com/photo/2017/08/30/01/05/books-2696809_1280.jpg") no-repeat center center/cover;
+    }
+
+    .quiz-container {
+      width: 90%;
+      max-width: 750px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+    @keyframes fadeOut { from {opacity: 1; transform: translateY(0);} to {opacity: 0; transform: translateY(-20px);} }
+
+    h2 { color: #2c3e50; margin-bottom: 10px; }
+
+    /* Progress Bar */
+    
+    
+    /* Question number + Timer */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .question-number { font-size: 18px; font-weight: bold; color: #1565c0; }
+    .timer { font-size: 18px; font-weight: bold; color: #e53935; }
+    .timer.warning { color: red; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0.5; } }
+
+    img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 3px solid #90caf9;
+    }
+
+    .options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Always 2×2 */
+  gap: 15px;
+  margin: 20px 0;
+}
+    .options button {
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #e3f2fd;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .options button:hover { background: #bbdefb; transform: scale(1.03); }
+    .options button.correct { background: #4caf50; color: white; }
+    .options button.wrong { background: #e53935; color: white; }
+
+    .next-btn, .restart-btn {
+      margin-top: 15px;
+      padding: 12px 25px;
+      font-size: 16px;
+      background: #42a5f5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .next-btn:hover, .restart-btn:hover { background: #1e88e5; }
+
+    .toggle-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      padding: 8px 15px;
+      background: #ffca28;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .toggle-btn.active { background: #66bb6a; color: white; }
+
+
+
+    .result-box {
+      display: none;
+      padding: 30px;
+      border-radius: 15px;
+      background: #fefefe;
+      box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.7s ease-in-out;
+    }
+    .result-box h3 { font-size: 24px; margin-bottom: 10px; color: #2c3e50; }
+    .result-box p { font-size: 18px; margin: 5px 0; }
+    .result-box.good { border: 3px solid #4caf50; }
+    .result-box.medium { border: 3px solid #ff9800; }
+    .result-box.bad { border: 3px solid #e53935; }
+
+    /* Mobile Responsive */
+   @media (max-width: 600px) {
+  .options button {
+    font-size: 16px;
+    padding: 12px;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="quiz-container" id="quiz-box">
+    <button class="toggle-btn" id="random-toggle">Random: ON</button>
+    <h2>📘 IOT WEEK5</h2>
+
+    <!-- Progress Bar -->
+  
+
+    <!-- Question number + Timer -->
+    <div class="top-bar">
+      <div class="question-number" id="question-number"></div>
+      <div class="timer">Time left: <span id="time">30</span>s</div>
+    </div>
+
+    <img id="question-img" src="" alt="Question">
+    <div class="options" id="options"></div>
+    <button class="next-btn" onclick="nextQuestion()">Next</button>
+    <button class="restart-btn" onclick="restartQuiz()" style="display:none;">Restart</button>
+    <div class="footer">© Created by <span style="color:red; font-weight: bold;">SATHYADEV</span></div>
+  </div>
+
+  <div class="result-box" id="result-box">
+    <h3>🎓 Quiz Completed!</h3>
+    <p id="final-score"></p>
+    <p id="percentage"></p>
+    <p id="message"></p>
+    <button class="restart-btn" onclick="restartQuiz()">Restart Quiz</button>
+  </div>
+
+  <script>
+    let questions = [
+  { img: "images/s61.png", correct: "a" },
+  { img: "images/s62.png", correct: "c" },
+  { img: "images/s63.png", correct: "b" },
+  { img: "images/s64.png", correct: "a" },
+  { img: "images/s65.png", correct: "b" },
+  { img: "images/s66.png", correct: "d" },
+  { img: "images/s67.png", correct: "d" },
+  { img: "images/s68.png", correct: "c" },
+  { img: "images/s69.png", correct: "a" },
+  { img: "images/s70.png", correct: "a" },
+  { img: "images/s71.png", correct: "b" },
+  { img: "images/s72.png", correct: "b" },
+  { img: "images/s73.png", correct: "a" },
+  { img: "images/s74.png", correct: "b" },
+  { img: "images/s75.png", correct: "c" }
+    ];
+
+    const optionLabels = ["a", "b", "c", "d"];
+    let shuffledQuestions = [];
+    let currentQuestion = 0;
+    let score = 0;
+    let timer, timeLeft = 30, randomOn = true;
+
+    const imgElement = document.getElementById("question-img");
+    const optionsDiv = document.getElementById("options");
+    const nextBtn = document.querySelector(".next-btn");
+    const timeDisplay = document.getElementById("time");
+    const randomToggle = document.getElementById("random-toggle");
+    const questionNumber = document.getElementById("question-number");
+   
+
+    const quizBox = document.getElementById("quiz-box");
+    const resultBox = document.getElementById("result-box");
+    const finalScore = document.getElementById("final-score");
+    const percentage = document.getElementById("percentage");
+    const message = document.getElementById("message");
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function loadQuestion() {
+      clearInterval(timer);
+      timeLeft = 30;
+      timeDisplay.textContent = timeLeft;
+      timer = setInterval(updateTimer, 1000);
+
+      let q = shuffledQuestions[currentQuestion];
+
+      quizBox.style.animation = "fadeOut 0.3s ease-in";
+      setTimeout(() => {
+        imgElement.src = q.img;
+        optionsDiv.innerHTML = "";
+        questionNumber.textContent = `Question ${currentQuestion + 1} of ${shuffledQuestions.length}`;
+
+        optionLabels.forEach(label => {
+          let btn = document.createElement("button");
+          btn.textContent = label.toUpperCase();
+          btn.onclick = () => checkAnswer(label, btn);
+          optionsDiv.appendChild(btn);
+        });
+
+        nextBtn.disabled = true;
+
+        // Update progress bar
+      
+
+        quizBox.style.animation = "fadeIn 0.5s ease-in-out";
+      }, 300);
+    }
+
+    function updateTimer() {
+      timeLeft--;
+      timeDisplay.textContent = timeLeft;
+
+      if (timeLeft <= 5) {
+        timeDisplay.parentElement.classList.add("warning");
+      } else {
+        timeDisplay.parentElement.classList.remove("warning");
+      }
+
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        nextQuestion();
+      }
+    }
+
+    function checkAnswer(answer, button) {
+      clearInterval(timer);
+      Array.from(optionsDiv.children).forEach(btn => btn.disabled = true);
+
+      let correct = shuffledQuestions[currentQuestion].correct;
+      if (answer === correct) {
+        button.classList.add("correct");
+        score++;
+      } else {
+        button.classList.add("wrong");
+        Array.from(optionsDiv.children).forEach(btn => {
+          if (btn.textContent.toLowerCase() === correct) btn.classList.add("correct");
+        });
+      }
+      nextBtn.disabled = false;
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < shuffledQuestions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      quizBox.style.display = "none";
+      resultBox.style.display = "block";
+
+      let percent = Math.round((score / shuffledQuestions.length) * 100);
+      finalScore.textContent = `✅ Your Score: ${score}/${shuffledQuestions.length}`;
+      percentage.textContent = `📊 Percentage: ${percent}%`;
+
+      resultBox.classList.remove("good","medium","bad");
+      if (percent >= 80) {
+        message.textContent = "🌟 Excellent! You're a study champion!";
+        resultBox.classList.add("good");
+      } else if (percent >= 50) {
+        message.textContent = "👍 Good effort! Keep practicing.";
+        resultBox.classList.add("medium");
+      } else {
+        message.textContent = "📖 Don't give up! Try again and improve.";
+        resultBox.classList.add("bad");
+      }
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      shuffledQuestions = randomOn ? shuffleArray([...questions]) : [...questions];
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      loadQuestion();
+    }
+
+    randomToggle.addEventListener("click", () => {
+      randomOn = !randomOn;
+      randomToggle.textContent = randomOn ? "Random: ON" : "Random: OFF";
+      randomToggle.classList.toggle("active", randomOn);
+      restartQuiz();
+    });
+
+    shuffledQuestions = shuffleArray([...questions]);
+    loadQuestion();
+  </script>
+</body>
+</html>
